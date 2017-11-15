@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+      <head>
+        <title>Weather</title>
+        <meta charset="utf-8">
+        <style>
+
+* {
+  box-sizing: border-box;
+}
+body {
+
+  background: url("images/3722_original.jpg") repeat-x;
+}
+
+#system-search {
+  background-position: 10px 10px;
+  background-repeat: repeat-x;
+  width: 100%;
+  font-size: 16px;
+  padding: 12px 20px 12px 40px;
+  border: 1px solid #ddd;
+  margin-bottom: 12px;
+}
+
+#tableWeather {
+  border-collapse: collapse;
+  width: 100%;
+  border: 1px solid #ddd;
+  font-size: 18px;
+}
+
+#tableWeather th, #tableWeather td {
+  text-align: left;
+  padding: 12px;
+}
+
+#tableWeather tr {
+  border-bottom: 1px solid #ddd;
+}
+
+#tableWeather tr.header, #tableWeather tr:hover {
+  background-color: #f1f1f1;
+}
+      </style>
+        <script src="https://code.jquery.com/jquery-3.2.1.min.js"integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="crossorigin="anonymous"></script>
+        <script src="includes/output.js"></script>
+        <script src="includes/cr.js"></script>
+        <script>
+        function myFunction() {
+          var input, filter, table, tr, td, i;
+          input = document.getElementById("system-search");
+          filter = input.value.toUpperCase();
+          table = document.getElementById("tableWeather");
+          tr = table.getElementsByTagName("tr");
+          for (i = 0; i < tr.length; i++) {
+            td = tr[i].getElementsByTagName("td")[0];
+            if (td) {
+              if (td.innerHTML.toUpperCase().indexOf(filter) > -1) {
+                tr[i].style.display = "";
+              } else {
+                tr[i].style.display = "none";
+              }
+            }
+          }
+        }
+      </script>
+
+
+            <script>
+
+         function renderTable(data, filter) {
+                console.log(filter);
+                var t_data= '';
+
+            $(data).map(function(i,o){
+                 console.log(o);
+                 if (o.title.indexOf(filter) > -1)
+                     return o;
+                 if (o.windspeed.indexOf(filter) > -1)
+                     return o;
+                 if (o.temperature.indexOf(filter) > -1)
+                     return o;
+                 if (o.humidity.indexOf(filter) > -1)
+                     return o;
+
+             }).each(function(key,value){
+                  t_data += '<tr>';
+                  t_data += '<td>'+value.title +'</td>';
+                  t_data += '<td>'+value.temperature+'</td>';
+                  t_data += '<td>'+value.humidity+'</td>';
+                  t_data += '<td>'+value.windspeed+'</td>';
+                  t_data += '</tr>';
+
+                });
+                $('#tableWeather').append(t_data);
+
+         }
+
+          $(document).ready(function(){
+              $.getJSON('output.json',function(data){
+                  renderTable(data, "");
+                $('#search').submit(function(){
+                    console.log($(this).serialize()); // here is the form data from the search , use it to call renderTable;
+                    return false;
+                });
+              });
+          });
+          </script>
+      </head>
+      <body background="images/sky-183869_640.jpg" >
+          <form action="#" method="get" id="search">
+                <div class="input-group">
+                    <input class="form-control" id="system-search"name="q" onkeyup="myFunction()" placeholder="Search for names..">
+                </div>
+            </form>
+          <table id="tableWeather" class="table-list-search tbody">
+            <thead>
+              <tr>
+                <th data-field="City">City name</th>
+                <th data-field="Temperature">temperature Name</th>
+                <th data-field="Humidity">humidity</th>
+                <th data-field="Wind speed">Wind Speed</th>
+            </tr>
+        </thead>
+
+
+      </table>
+
+      </body>
+</html>
